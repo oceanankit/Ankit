@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Mario Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #5C94FC, #E0F6FF);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #gameContainer {
+            text-align: center;
+            background: #000;
+            border: 3px solid #333;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        #gameCanvas {
+            border: 2px solid #444;
+            background: #5C94FC;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        #controls {
+            color: white;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        #score {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .control-key {
+            background: #333;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="score">Score: 0 | Lives: 3</div>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+        <div id="controls">
+            <p>Controls: 
+                <span class="control-key">A/D</span> or <span class="control-key">←/→</span> Move | 
+                <span class="control-key">W</span> or <span class="control-key">SPACE</span> Jump
+            </p>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
