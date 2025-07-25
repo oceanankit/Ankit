@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Mario HTML Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #228B22 60%, #228B22 100%);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #mario {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #FF0000;
+            border: 2px solid #8B0000;
+            border-radius: 4px;
+            bottom: 150px;
+            left: 50px;
+            transition: none;
+        }
+
+        #mario::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 8px;
+            width: 24px;
+            height: 12px;
+            background: #8B4513;
+            border-radius: 12px 12px 0 0;
+        }
+
+        #mario::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            width: 16px;
+            height: 8px;
+            background: #FFE4B5;
+            border-radius: 4px;
+        }
+
+        .platform {
+            position: absolute;
+            background: #8B4513;
+            border: 2px solid #654321;
+        }
+
+        .ground {
+            bottom: 0;
+            width: 100%;
+            height: 150px;
+            background: #228B22;
+            border-top: 4px solid #32CD32;
+        }
+
+        .coin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border: 2px solid #FFA500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .goomba {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #8B4513;
+            border: 2px solid #654321;
+            border-radius: 15px 15px 4px 4px;
+            bottom: 150px;
+            animation: walk 2s linear infinite;
+        }
+
+        @keyframes walk {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(100px); }
+        }
+
+        .pipe {
+            position: absolute;
+            background: #228B22;
+            border: 3px solid #006400;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .pipe::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            height: 16px;
+            background: #228B22;
+            border: 3px solid #006400;
+            border-radius: 8px;
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 25px;
+            opacity: 0.8;
+            animation: float 20s linear infinite;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 25px;
+        }
+
+        .cloud1 {
+            width: 80px;
+            height: 40px;
+            top: 80px;
+            left: -100px;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -15px;
+            right: 10px;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="score">Score: <span id="scoreValue">0</span></div>
+        <div id="instructions">
+            Use ARROW KEYS to move<br>
+            SPACEBAR to jump<br>
+            Collect coins and avoid enemies!
+        </div>
+        
+        <div id="mario"></div>
+        
+        <!-- Ground -->
+        <div class="platform ground"></div>
+        
+        <!-- Platforms -->
+        <div class="platform" style="width: 200px; height: 20px; bottom: 250px; left: 300px;"></div>
+        <div class="platform" style="width: 150px; height: 20px; bottom: 350px; left: 600px;"></div>
+        <div class="platform" style="width: 180px; height: 20px; bottom: 300px; left: 900px;"></div>
+        <div class="platform" style="width: 120px; height: 20px; bottom: 400px; left: 1200px;"></div>
+        
+        <!-- Pipes -->
+        <div class="pipe" style="width: 60px; height: 100px; bottom: 150px; left: 800px;"></div>
+        <div class="pipe" style="width: 60px; height: 120px; bottom: 150px; left: 1400px;"></div>
+        
+        <!-- Coins -->
+        <div class="coin" style="bottom: 280px; left: 350px;"></div>
+        <div class="coin" style="bottom: 380px; left: 650px;"></div>
+        <div class="coin" style="bottom: 330px; left: 950px;"></div>
+        <div class="coin" style="bottom: 430px; left: 1250px;"></div>
+        <div class="coin" style="bottom: 300px; left: 820px;"></div>
+        
+        <!-- Enemies -->
+        <div class="goomba" style="left: 400px;"></div>
+        <div class="goomba" style="left: 1000px; animation-delay: -1s;"></div>
+        
+        <!-- Clouds -->
+        <div class="cloud cloud1" style="animation-delay: 0s;"></div>
+        <div class="cloud cloud1" style="animation-delay: -10s; top: 120px;"></div>
+        
+        <div id="gameOver">
+            <h2>Game Over!</h2>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const mario = document.getElementById('mario');
+        const gameContainer = document.getElementById('gameContainer');
+        const scoreElement = document.getElementById('scoreValue');
+        const gameOverElement = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+
+        let marioPosition = { x: 50, y: 150 };
+        let marioVelocity = { x: 0, y: 0 };
+        let isGrounded = false;
+        let score = 0;
+        let gameRunning = true;
+        let keys = {};
+
+        // Game constants
+        const GRAVITY = 0.8;
+        const JUMP_FORCE = -15;
+        const MOVE_SPEED = 5;
+        const GROUND_LEVEL = 150;
+
+        // Initialize Mario position
+        function updateMarioPosition() {
+            mario.style.left = marioPosition.x + 'px';
+            mario.style.bottom = marioPosition.y + 'px';
+        }
+
+        // Handle keyboard input
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isGrounded) {
+                    marioVelocity.y = JUMP_FORCE;
+                    isGrounded = false;
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+
+        // Check collision with rectangles
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // Get element bounds
+        function getElementBounds(element) {
+            const rect = element.getBoundingClientRect();
+            const containerRect = gameContainer.getBoundingClientRect();
+            return {
+                x: rect.left - containerRect.left,
+                y: containerRect.bottom - rect.bottom,
+                width: rect.width,
+                height: rect.height
+            };
+        }
+
+        // Check platform collisions
+        function checkPlatformCollisions() {
+            const marioBounds = {
+                x: marioPosition.x,
+                y: marioPosition.y,
+                width: 40,
+                height: 40
+            };
+
+            const platforms = document.querySelectorAll('.platform');
+            
+            platforms.forEach(platform => {
+                const platformBounds = getElementBounds(platform);
+                
+                if (checkCollision(marioBounds, platformBounds)) {
+                    // Landing on top of platform
+                    if (marioVelocity.y <= 0 && marioBounds.y <= platformBounds.y + platformBounds.height) {
+                        marioPosition.y = platformBounds.y + platformBounds.height;
+                        marioVelocity.y = 0;
+                        isGrounded = true;
+                    }
+                }
+            });
+        }
+
+        // Check coin collection
+        function checkCoinCollection() {
+            const marioBounds = {
+                x: marioPosition.x,
+                y: marioPosition.y,
+                width: 40,
+                height: 40
+            };
+
+            const coins = document.querySelectorAll('.coin');
+            
+            coins.forEach(coin => {
+                const coinBounds = getElementBounds(coin);
+                
+                if (checkCollision(marioBounds, coinBounds)) {
+                    coin.remove();
+                    score += 100;
+                    scoreElement.textContent = score;
+                }
+            });
+        }
+
+        // Check enemy collision
+        function checkEnemyCollision() {
+            const marioBounds = {
+                x: marioPosition.x,
+                y: marioPosition.y,
+                width: 40,
+                height: 40
+            };
+
+            const enemies = document.querySelectorAll('.goomba');
+            
+            enemies.forEach(enemy => {
+                const enemyBounds = getElementBounds(enemy);
+                
+                if (checkCollision(marioBounds, enemyBounds)) {
+                    // Check if Mario is falling on top of enemy
+                    if (marioVelocity.y <= 0 && marioBounds.y > enemyBounds.y + enemyBounds.height - 10) {
+                        enemy.remove();
+                        score += 200;
+                        scoreElement.textContent = score;
+                        marioVelocity.y = JUMP_FORCE / 2; // Small bounce
+                    } else {
+                        // Game over
+                        gameOver();
+                    }
+                }
+            });
+        }
+
+        // Game over function
+        function gameOver() {
+            gameRunning = false;
+            finalScoreElement.textContent = score;
+            gameOverElement.style.display = 'block';
+        }
+
+        // Restart game function
+        function restartGame() {
+            location.reload();
+        }
+
+        // Main game loop
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            // Handle horizontal movement
+            if (keys['ArrowLeft']) {
+                marioVelocity.x = -MOVE_SPEED;
+            } else if (keys['ArrowRight']) {
+                marioVelocity.x = MOVE_SPEED;
+            } else {
+                marioVelocity.x = 0;
+            }
+
+            // Apply gravity
+            if (!isGrounded) {
+                marioVelocity.y += GRAVITY;
+            }
+
+            // Update position
+            marioPosition.x += marioVelocity.x;
+            marioPosition.y += marioVelocity.y;
+
+            // Boundary checks
+            if (marioPosition.x < 0) marioPosition.x = 0;
+            if (marioPosition.x > window.innerWidth - 40) marioPosition.x = window.innerWidth - 40;
+
+            // Ground collision
+            if (marioPosition.y <= GROUND_LEVEL) {
+                marioPosition.y = GROUND_LEVEL;
+                marioVelocity.y = 0;
+                isGrounded = true;
+            } else {
+                isGrounded = false;
+            }
+
+            // Check platform collisions
+            checkPlatformCollisions();
+
+            // Check coin collection
+            checkCoinCollection();
+
+            // Check enemy collisions
+            checkEnemyCollision();
+
+            // Check if Mario fell off the screen
+            if (marioPosition.y < -100) {
+                gameOver();
+            }
+
+            // Update Mario's position on screen
+            updateMarioPosition();
+
+            // Continue the game loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game
+        updateMarioPosition();
+        gameLoop();
+
+        // Make restart function global
+        window.restartGame = restartGame;
+    </script>
+</body>
+</html>
